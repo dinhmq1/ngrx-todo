@@ -1,0 +1,82 @@
+Rather than group by type of code, e.g. placing all reducers in
+one directory, actions in another and so on. Instead we should group
+by feature to co-locate code that works together, since it's likely
+that this code also changes together.
+
+src
+`-- app
+    `-- store
+        |-- index.ts
+        `-- todo
+            |-- todo.actions.ts
+            |-- todo.reducer.ts
+            `-- todo.state.ts
+
+Inside todo.actions.ts export individual actions then we can import
+them directly in our components.
+
+import { create } from "../../store/todo/actions";
+
+...alternatively we can use a named import to prevent collisions:
+
+import * as TodoActions from "../../store/todo/actions";
+
+The model for a state slice may be defined in an interface inside
+the corresponding .state.ts file. Also we'll want to export an initial
+state that implements the interface from there. Here's todo.state.ts
+
+// todo.state.ts
+export interface TodoActions {}
+
+export const initialState: TodoState = {}
+
+Reducers files like todo.reducer.ts should always export a single
+reducer function, preferably prefixed with the state propert it's meant for:
+
+// todo.reducer.ts
+import { createReducer } from "@ngrx/store";
+import { initialState } from "./todo.state";
+
+export const todoReducer = createReducer(initialState);
+
+Then everything is wired together inside index.ts by defining a type for
+the root state and exporting a reducer mapping:
+
+// index.ts
+import { ActionReducerMap } from "@ngrx/store";
+import { todoReducer } from "./todo.reducer";
+import { TodoState } from "./todo.state";
+export interface RootState {
+  todo: TodoState;
+}
+export const reducers: ActionReducerMap<RootState> = {
+  todo: todosReducer,
+};
+
+Lastly, we'll register the reducer mapping through StoreModule.forRoot()
+in the app module, we can inject the store. I'm doing this in a parent
+component for the todo app while using RootState as its generic type
+parameter:
+
+// todos.component.ts
+import { Component, OnInit } from "@angular/core";
+import { RootState } from "../../store/root";
+import { Store } from "@ngrx/store";
+
+@Component({
+  selector: "app-todos",
+  templateUrl: "./todos.component.html",
+  styleUrls: ["./todos.component.scss"],
+})
+export class TodosComponent {
+  constructor(private store: Store<RootState>) {}
+}
+
+
+
+
+
+
+
+
+
