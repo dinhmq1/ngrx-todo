@@ -72,11 +72,110 @@ export class TodosComponent {
   constructor(private store: Store<RootState>) {}
 }
 
+The application state is a plain object restricted by static typing.
+It can contain arbitrary information, but we should avoid redundancies
+and keep it serializable.
 
+Using TypeScript we're able to declare static types defining the app state.
+These will be used in reducers, components, services, effects and basically
+anywhere we're dealing with the state.
 
+Through TS we can define data models either using interfaces or type
+declarations. So, when we want to describe the shape of a single todo
+we could do this with an interface.
 
+// todo.ts
 
+export interface Issue {
+  id: string;
+  title: string;
+  description: string;
+  priority: "low" | "medium" | "high";
+  completed: boolean;
+}
 
+also using the type keyword:
 
+// todo.ts
 
+export type Issue = {
+  id: string;
+  title: string;
+  description: string;
+  priority: "low" | "medium" | "high";
+  completed: boolean;
+}
 
+Such type alias declarations are generally more powerful than interfaces
+since they can give a name to any type - including things like functions
+or primitives. I tend to use interfaces in most cases and sprinkle in some
+type aliases for tuples or unions - e.g. for extracting the priority type:
+
+// priority.ts
+
+export type Priority = "low" | "medium" | "high";
+
+The base shape of our feature state should be outlined by an interface
+inside <feature>.state.ts . The todo model for example might also be
+placed in a file src/app/models/todo.ts
+
+Devs with experience in object-oriented programming intuitively reach
+for classes in TS. Angular makes heavy use of them for the application
+building blocks like components or services. However, they don't really fit
+the patter when working with NgRx because that means we're embracing
+immutability. Classes, however, are commonly used in mutable fashion
+where we change their inner state by calling instance methods.
+
+Reducers are supposed to compute a new state without modifying the last one.
+If we would work with mutable classes and re-use them for subsequent states, we would break this rule. This can then create all sorts of problems. For one thing, it’s harder to update the view when state changes since NgRx generally relies upon simple reference checks for that. With plain objects where we always create a new state instead of modifying the last one, those checks work like a charm:
+
+Actions represent unique events occurring in your application. These can originate from things like user-interactions, HTTP calls or WebSockets. Anytime something happens that might result in a change to the application state we send an action to the NgRx store.
+
+While actions are an integral part of NgRx, they’re actually pretty simple in their nature. This interface with a single property type is enough to describe them:
+
+interface Action {
+  type: string;
+}
+
+You don’t even need to implement this interface specifically. Any plain object with the type property can count as an action. We’re also allowed to add custom properties to actions in order to give context to an event. Here’s how you could dispatch an action that indicates the submission of a new issue. Note that the NgRx store is usually injected into components or services and therefore available via 'this' .
+
+const submitAction = {
+  type: "[Issue] Submit",
+  issue: {
+    id: randomId(),
+    title: "Understanding Actions",
+    description: "Actions represent events"
+    priority: "high",
+    resolved: false
+  },
+};
+this.store.dispatch(submitAction);
+
+NgRx doesn’t care about names at all as long as they’re unique per type of action. The type names are mainly for me and our co-developers to read. It’s worth thinking twice about them in order to ease the maintenance of our app. Name our types so that when looking at the action log we can easily understand what happened in the application. Therefore, avoid types that sound like setters or ones that are too generic such as “Update State”.
+
+It’s totally fine for the store to dispatch actions that we create inline. Though, to make our life easier we can leverage action creators. These are simply functions that create new actions upon invocation. Technically, we could write such an action creator ourselves:
+
+function submitActionCreator(todo: Todo) {
+  return {
+    type: "[Todo] Submit",
+    todo,
+    };
+}
+const submitAction = submitActionCreator({
+  id: randomId(),
+  title: "Understanding Actions",
+  description: "Actions represent events ...",
+  priority: "high",
+  completed: false,
+});
+
+Using createAction() with props() function helps to reduce boilerplate when defining actions or rather action creators:
+
+import { createAction, props } from "@ngrx/store";
+
+export const submit = createAction(
+  "[Todo] Submit",
+  props<{todo: Todo}>
+);
+
+The generic type passed to defines any custom properties - also called payload or metadata. Both createAction() and   actually create something very similar to our own action creator function - they just make clever use of TypeScript to enable the succinct code above.

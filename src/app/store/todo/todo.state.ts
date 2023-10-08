@@ -1,3 +1,21 @@
-export interface TodoState {}
+import { Todo } from '../../models/todo';
 
-export const initialState: TodoState = {};
+export interface Todos {
+  [id: string]: Todo;
+}
+
+export interface Filter {
+  text: string;
+}
+
+export interface TodoState {
+  entities: Todos;
+  filter: Filter;
+}
+
+export const initialState: TodoState = {
+  entities: {},
+  filter: {
+    text: '',
+  },
+};
