@@ -6,10 +6,10 @@
 />
 <ul>
   <li *ngFor="let todo of todos$ | async">
-    <h2>
+    <h3>
       <a [routerLink]="todo.id">{{ todo.title }}</a>
       <small>{{ todo.priority }}</small>
-    </h2>
+    </h3>
     <p>{{ todo.description }}</p>
     <button (click)="resolve(todo)" [disabled]="todo.completed">
       {{ todo.completed ? "Completed" : "Complete" }}
