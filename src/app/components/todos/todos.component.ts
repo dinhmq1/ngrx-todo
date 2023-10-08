@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
   templateUrl: './todos.component.html',
   styleUrls: ['./todos.component.scss'],
 })
-export class TodosComponent implements OnInit{
+export class TodosComponent implements OnInit {
   constructor(private store: Store<RootState>) {}
 
   ngOnInit(): void {}

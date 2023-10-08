@@ -1,5 +1,17 @@
-import { ActionReducerMap } from '@ngrx/store';
+import { ActionReducerMap, MetaReducer } from '@ngrx/store';
 
-export interface RootState {}
+import { TodoState } from './todo/todo.state';
+import { resettingMetaReducer } from './meta-reducers';
+import { todoReducer } from './todo/todo.reducer';
 
-export const reducers: ActionReducerMap<RootState> = {};
+export interface RootState {
+  todo: TodoState;
+}
+
+export const reducers: ActionReducerMap<RootState> = {
+  todo: todoReducer,
+};
+
+export const metaReducers: MetaReducer[] = [
+  resettingMetaReducer,
+];
