@@ -2,8 +2,14 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
+  "cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics",
+      "@ngrx/schematics"
+    ]
+  },
   "projects": {
-    "todo-app": {
+    "ngrx-todo": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +23,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/todo-app",
+            "outputPath": "dist/ngrx-todo",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -51,8 +57,8 @@
               "outputHashing": "all",
               "fileReplacements": [
                 {
-                  "replace": "src/app/modules.ts",
-                  "with": "src/app/modules.prod.ts"
+                  "replace": "src/app/modules/modules.ts",
+                  "with": "src/app/modules/modules.prod.ts"
                 }
               ]
             },
@@ -71,10 +77,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "todo-app:build:production"
+              "browserTarget": "ngrx-todo:build:production"
             },
             "development": {
-              "browserTarget": "todo-app:build:development"
+              "browserTarget": "ngrx-todo:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,7 +88,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "todo-app:build"
+            "browserTarget": "ngrx-todo:build"
           }
         },
         "test": {
@@ -102,6 +108,15 @@
               "src/styles/styles.scss"
             ],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }

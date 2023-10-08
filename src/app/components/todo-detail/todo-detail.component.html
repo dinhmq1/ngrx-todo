@@ -1,0 +1,7 @@
+<section *ngIf="todo$ | async as todo">
+  <h2>
+    {{ todo.title }}
+    <small>{{ todo.priority }}</small>
+  </h2>
+  <p>{{ todo.description }}</p>
+</section>

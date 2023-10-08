@@ -11,6 +11,7 @@ export interface Filter {
 export interface TodoState {
   entities: Todos;
   filter: Filter;
+  loaded: boolean;
 }
 
 export const initialState: TodoState = {
@@ -18,4 +19,5 @@ export const initialState: TodoState = {
   filter: {
     text: '',
   },
+  loaded: false,
 };

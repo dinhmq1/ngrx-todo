@@ -1,7 +1,10 @@
 <header>
   <h1>To Do App</h1>
   <a routerLink="/todos">Todos</a>
-  <button (click)="reset()">Reset</button>
+  <div *ngIf="stats$ | async as stats">
+    <span>{{ stats.completed }} / {{ stats.total }} completed</span>
+    <button (click)="reset()">Reset</button>
+  </div>
 </header>
 <main>
   <router-outlet></router-outlet>

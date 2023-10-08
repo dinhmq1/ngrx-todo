@@ -1,36 +1,49 @@
-import * as TodoActions from './todo.actions';
+import { ActionReducer, createReducer, on } from '@ngrx/store';
+import { TodoState, initialState } from './todo.state';
 
-import { createReducer, on } from '@ngrx/store';
-
-import { Priority } from 'src/app/models/priority';
-import { initialState } from './todo.state';
-import { loggingMetaReducer } from '../meta-reducers';
+import { TodoActions } from './todo.actions';
 import { produce } from 'immer';
 
 export const reducer = createReducer(
   initialState,
   on(TodoActions.submit, (state, { todo }) =>
-    produce(
-      state,
-      (draft: {
-        entities: {
-          [x: string]: {
-            resolved: boolean;
-            id: string;
-            title: string;
-            description: string;
-            priority: Priority;
-            completed: boolean;
-          };
-        };
-      }) => {
-        draft.entities[todo.id] = {
+    produce(state, (draft) => {
+      draft.entities[todo.id] = {
+        ...todo,
+        completed: false,
+      };
+    })
+  ),
+  on(
+    TodoActions.search,
+    (state, { text }): TodoState => ({
+      ...state,
+      filter: {
+        ...state.filter,
+        text,
+      },
+    })
+  ),
+  on(TodoActions.resolve, (state, { todoId }): TodoState => {
+    const todo = state.entities[todoId];
+    return {
+      ...state,
+      entities: {
+        ...state.entities,
+        [todoId]: {
           ...todo,
-          resolved: false,
-        };
-      }
-    )
-  )
+          completed: true,
+        },
+      },
+    };
+  })
 );
 
-export const todoReducer = loggingMetaReducer(reducer);
+export const todoReducer: ActionReducer<TodoState> = (state, action) => {
+  try {
+    return reducer(state, action);
+  } catch (error) {
+    console.error(error);
+    return state ?? initialState;
+  }
+};

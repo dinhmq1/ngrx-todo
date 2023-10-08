@@ -2,9 +2,9 @@ import * as fromTodo from '../../store/todo/todo.selectors';
 
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RootState } from '../../store';
 import { Store } from '@ngrx/store';
 import { Todo } from '../../models/todo';
+import { TodoActions } from 'src/app/store/todo/todo.actions';
 
 @Component({
   selector: 'app-todo-list',
@@ -14,7 +14,14 @@ import { Todo } from '../../models/todo';
 export class TodoListComponent {
   todos$: Observable<Todo[]>;
 
-  constructor(private store: Store<RootState>) {
-    this.todos$ = this.store.select(fromTodo.selectAll);
+  constructor(private store: Store) {
+    this.todos$ = this.store.select(fromTodo.selectFiltered);
+  }
+  search(text: string): void {
+    this.store.dispatch(TodoActions.search({ text }));
+  }
+
+  resolve(todo: Todo): void {
+    this.store.dispatch(TodoActions.resolve({ todoId: todo.id }));
   }
 }

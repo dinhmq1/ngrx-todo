@@ -1,18 +1,20 @@
-import { createAction, props } from '@ngrx/store';
+import { createActionGroup, props } from '@ngrx/store';
 
 import { Todo } from '../../models/todo';
-import { randomId } from '../../util';
+import { randomId } from '../../random-id';
 
-// export const submit = createAction(
-//   '[Issue] Submit',
-//   props<{ issue: Issue }>()
-// );
-
-export const submit = createAction('[Todo] Submit', (todo: Todo) => {
-  return {
-    todo: {
-      ...todo,
-      id: randomId(),
+export const TodoActions = createActionGroup({
+  source: 'Todos',
+  events: {
+    Submit: (todo: Todo) => {
+      return {
+        todo: {
+          ...todo,
+          id: randomId(),
+        },
+      };
     },
-  };
+    Search: props<{ text: string }>(),
+    Resolve: props<{ todoId: string }>(),
+  },
 });

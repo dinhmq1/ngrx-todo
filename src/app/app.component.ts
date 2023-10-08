@@ -1,4 +1,7 @@
+import * as fromTodo from './store/todo/todo.selectors';
+
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { reset } from './store/meta-reducers';
 
@@ -8,7 +11,12 @@ import { reset } from './store/meta-reducers';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  constructor(private store: Store) {}
+  stats$: Observable<fromTodo.TodoStats>;
+
+  constructor(private store: Store) {
+    this.stats$ = this.store.select(fromTodo.selectStats);
+  }
+
   reset(): void {
     this.store.dispatch(reset());
   }

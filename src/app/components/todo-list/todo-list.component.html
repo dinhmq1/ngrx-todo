@@ -1,3 +1,9 @@
+<input
+  placeholder="Search ..."
+  #searchInput
+  type="text"
+  (input)="search(searchInput.value)"
+/>
 <ul>
   <li *ngFor="let todo of todos$ | async">
     <h2>
@@ -5,5 +11,8 @@
       <small>{{ todo.priority }}</small>
     </h2>
     <p>{{ todo.description }}</p>
+    <button (click)="resolve(todo)" [disabled]="todo.completed">
+      {{ todo.completed ? "Completed" : "Complete" }}
+    </button>
   </li>
 </ul>

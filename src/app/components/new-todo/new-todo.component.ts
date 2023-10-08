@@ -1,10 +1,8 @@
-import * as TodoActions from '../../store/todo/todo.actions';
-
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Component } from '@angular/core';
-import { RootState } from '../../store';
 import { Store } from '@ngrx/store';
+import { TodoActions } from '../../store/todo/todo.actions';
 
 @Component({
   selector: 'app-new-todo',
@@ -14,7 +12,7 @@ import { Store } from '@ngrx/store';
 export class NewTodoComponent {
   form: FormGroup;
 
-  constructor(private store: Store<RootState>, private fb: FormBuilder) {
+  constructor(private store: Store, private fb: FormBuilder) {
     this.form = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
@@ -23,7 +21,7 @@ export class NewTodoComponent {
   }
 
   submit(): void {
-    const issue = this.form.value;
-    this.store.dispatch(TodoActions.submit(issue));
+    const todo = this.form.value;
+    this.store.dispatch(TodoActions.submit(todo));
   }
 }

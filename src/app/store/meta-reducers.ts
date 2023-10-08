@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any --
+we cannot know the type of the underyling reducers, using any here is okay */
 import { ActionReducer, createAction } from '@ngrx/store';
 
 export const loggingMetaReducer = (
@@ -13,7 +15,7 @@ export const loggingMetaReducer = (
   };
 };
 
-export const reset = createAction('Reset');
+export const reset = createAction('[Meta] Reset');
 
 export const resettingMetaReducer = (
   reducer: ActionReducer<any>
